@@ -244,7 +244,7 @@
         function checkAnswer(selectedOption) {
             if (selectedOption === questions[currentQuestionIndex].answer) {
                 score++;
-                document.getElementById('score').textContent = "Score: " + score;
+                document.getElementById('score').textContent = + score;
                 document.getElementById('answer-box').style.borderColor = 'green';
             } else {
                 document.getElementById('answer-box').style.borderColor = 'red';
