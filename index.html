@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training and Development Quiz</title>
+    <style>
+        body,
+        html {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            background-color: #004080;
+            color: white;
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+
+        #game-container {
+            width: 80%;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 10px;
+            background-color: #0066cc;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .question-area,
+        .options-area {
+            margin: 20px;
+            padding: 10px;
+        }
+
+        .options-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .options-row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .option {
+            background-color: #ffffff;
+            border: 1px solid #888;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            width: 45%;
+            cursor: pointer;
+            color: black;
+            text-align: center;
+        }
+
+        .answer-box {
+            width: 90%;
+            min-height: 50px;
+            margin: 0 auto 20px;
+            border: 2px dashed #ffffff;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            color: black;
+            text-align: center;
+        }
+
+        #score-display {
+            margin-top: 20px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-container">
+        <h1>Training and Development Quiz</h1>
+        <div id="question" class="question-area"></div>
+        <div id="options" class="options-area"></div>
+        <div id="answer-box" class="answer-box" ondragover="allowDrop(event)" ondrop="drop(event)">
+            Drag your answer here
+        </div>
+        <div id="score-display">Score: <span id="score">0</span></div>
+        <button onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', initializeGame);
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const questions = [
+            {
+                question: "A company is implementing a new software system. Which training method would be most effective for ensuring employees can use the new system proficiently?",
+                options: ["A) Classroom-based lectures", "B) On-the-job training with hands-on practice", "C) Watching instructional videos", "D) Reading the software manual"],
+                answer: "B"
+            },
+            {
+                question: "An organization wants to improve its customer service skills. Which of the following training techniques would be most effective?",
+                options: ["A) Lecture-based training", "B) Role-playing scenarios", "C) Self-paced online courses", "D) Providing printed handbooks"],
+                answer: "B"
+            },
+            {
+                question: "After a training session, an employee feels confident but still makes frequent errors. What should the next step be in their development?",
+                options: ["A) Terminate the employee", "B) Schedule a performance review", "C) Provide additional hands-on practice with feedback", "D) Assign the employee to a different role"],
+                answer: "C"
+            },
+            {
+                question: "A company is assessing its training effectiveness and finds that employees are not retaining information. Which approach might improve retention?",
+                options: ["A) Increasing the length of training sessions", "B) Incorporating interactive elements and quizzes", "C) Reducing the frequency of training sessions", "D) Using only written materials for training"],
+                answer: "B"
+            },
+            {
+                question: "During an evaluation of a new training program, feedback indicates that employees are struggling to apply the new skills in their work. What should the company do to address this?",
+                options: ["A) Ignore the feedback and continue with the program", "B) Enhance the program with practical, job-related exercises", "C) Reduce the complexity of the training content", "D) Extend the duration of each training session"],
+                answer: "B"
+            },
+            {
+                question: "Which of the following is the primary objective of employee training and development?",
+                options: ["A) To increase employee salary", "B) To enhance employee skills and knowledge", "C) To reduce employee working hours", "D) To improve office infrastructure"],
+                answer: "B"
+            },
+            {
+                question: "What is the first step in the training and development process?",
+                options: ["A) Implementation", "B) Evaluation", "C) Training needs assessment", "D) Design"],
+                answer: "C"
+            },
+            {
+                question: "Which method is commonly used for on-the-job training?",
+                options: ["A) Classroom lectures", "B) Case studies", "C) Job rotation", "D) E-learning"],
+                answer: "C"
+            },
+            {
+                question: "Which of the following is a benefit of e-learning in training and development?",
+                options: ["A) High travel expenses", "B) Limited accessibility", "C) Flexible learning schedules", "D) One-size-fits-all approach"],
+                answer: "C"
+            },
+            {
+                question: "What does the acronym 'ADDIE' stand for in the context of instructional design?",
+                options: ["A) Analyze, Design, Develop, Implement, Evaluate", "B) Assess, Develop, Design, Implement, Execute", "C) Analyze, Define, Design, Implement, Evaluate", "D) Assess, Design, Develop, Implement, Evaluate"],
+                answer: "A"
+            },
+            {
+                question: "Which type of training is focused on helping employees understand and manage their emotions and interactions with others?",
+                options: ["A) Technical training", "B) Compliance training", "C) Soft skills training", "D) Safety training"],
+                answer: "C"
+            },
+            {
+                question: "What is the purpose of a training evaluation?",
+                options: ["A) To determine the training budget", "B) To identify training needs", "C) To measure the effectiveness of the training", "D) To select training participants"],
+                answer: "C"
+            },
+            {
+                question: "Which training method involves employees acting out scenarios to practice skills?",
+                options: ["A) Case study method", "B) Role-playing", "C) Job shadowing", "D) Lecture method"],
+                answer: "B"
+            },
+            {
+                question: "In the context of training and development, what does the term 'blended learning' refer to?",
+                options: ["A) Training that combines on-the-job and off-the-job methods", "B) Training that mixes different training topics", "C) Training that integrates classroom-based and online learning", "D) Training that alternates between different trainers"],
+                answer: "C"
+            },
+            {
+                question: "Which of the following is an example of informal learning in the workplace?",
+                options: ["A) Attending a scheduled workshop", "B) Participating in a certification program", "C) Learning through daily work experiences", "D) Completing a mandatory training module"],
+                answer: "C"
+            }
+
+        ];
+
+        function initializeGame() {
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                document.getElementById('question').textContent = "Quiz Completed!";
+                document.getElementById('options').innerHTML = '';
+                document.getElementById('answer-box').innerHTML = "Final Score: " + score;
+                return;
+            }
+
+            let question = questions[currentQuestionIndex];
+            document.getElementById('question').textContent = question.question;
+            document.getElementById('options').innerHTML = '';
+            document.getElementById('answer-box').innerHTML = 'Drag your answer here';
+
+            let row = null;
+            question.options.forEach((option, index) => {
+                if (index % 2 === 0) {
+                    row = document.createElement('div');
+                    row.className = 'options-row';
+                    document.getElementById('options').appendChild(row);
+                }
+                let optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.draggable = true;
+                optionDiv.id = 'option-' + index;
+                optionDiv.setAttribute('data-answer', option[0]);
+                optionDiv.addEventListener('dragstart', function (event) {
+                    event.dataTransfer.setData("text", event.target.id);
+                });
+                row.appendChild(optionDiv);
+            });
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text");
+            var option = document.getElementById(data);
+            var target = event.target;
+
+            if (target.classList.contains('answer-box') && target.innerHTML === 'Drag your answer here') {
+                target.innerHTML = '';
+                target.appendChild(option);
+                checkAnswer(option.getAttribute('data-answer'));
+            }
+        }
+
+        function checkAnswer(selectedOption) {
+            if (selectedOption === questions[currentQuestionIndex].answer) {
+                score++;
+                document.getElementById('score').textContent = "Score: " + score;
+                document.getElementById('answer-box').style.borderColor = 'green';
+            } else {
+                document.getElementById('answer-box').style.borderColor = 'red';
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+    </script>
+</body>
+
+</html>
